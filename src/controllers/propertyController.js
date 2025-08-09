@@ -1,3 +1,28 @@
+const Property = require('../models/Property');
+const Match = require('../models/Match');
+
+exports.list = async (req, res) => {
+  const props = await Property.findAll();
+  res.render('properties/list', { props });
+};
+
+exports.detail = async (req, res) => {
+  const p = await Property.findByPk(req.params.id);
+  if (!p) {
+    req.flash('message', 'Propiedad no encontrada');
+    return res.redirect('/properties');
+  }
+  res.render('properties/detail', { p, message: req.flash('message') });
+};
+
+exports.matchesForTenant = async (req, res) => {
+  if (!req.session.userId || req.session.role !== 'tenant') {
+    return res.redirect('/login');
+  }
+  const matches = await Match.findAll({ where: { userId: req.session.userId, status: 'matched' } });
+  res.render('tenant/matches', { matches });
+};
+
 exports.like = async (req, res) => {
   if (!req.session.userId || req.session.role !== 'tenant') {
     req.flash('message', 'Debes ingresar como inquilino');
