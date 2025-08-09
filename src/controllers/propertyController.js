@@ -7,7 +7,11 @@ exports.like=async (req,res)=>{ if(!req.session.userId||req.session.role!=='tena
  if(!property) return res.redirect('/properties');
  let m=await Match.findOne({ where:{ userId:req.session.userId, propertyId } });
  if(!m){ m=await Match.create({ userId:req.session.userId, propertyId, status:'liked' }); req.flash('message','¡Enviado! Si el propietario también te elige, habrá Match.'); }
- else if(m.status==='liked'){ req.flash('message','Ya habías indicado interés por esta propiedad.'); }
+ else if(m.status==='liked'){
+     m.status='matched';
+     await m.save();
+     req.flash('message','¡Se produjo un Match con el propietario!');
+ }
  else if(m.status==='rejected'){ m.status='liked'; await m.save(); req.flash('message','Se actualizó tu interés.'); }
  else { req.flash('message','¡Ya hay Match en esta propiedad!'); } return res.redirect('/properties/'+propertyId); };
 exports.ownerList=async (req,res)=>{ if(!req.session.userId||req.session.role!=='owner') return res.redirect('/login');
