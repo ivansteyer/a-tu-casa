@@ -2,7 +2,8 @@ const Property = require('../models/Property'); const TenantProfile = require('.
 exports.list=async (req,res)=>{ const props=await Property.findAll({ order:[['id','DESC']] }); res.render('properties/list',{ props }); };
 exports.detail=async (req,res)=>{ const p=await Property.findByPk(req.params.id); if(!p) return res.redirect('/properties'); res.render('properties/detail',{ p, message:req.flash('message') }); };
 exports.like=async (req,res)=>{ if(!req.session.userId||req.session.role!=='tenant'){ req.flash('message','Debes ingresar como inquilino'); return res.redirect('/login'); }
- const propertyId=req.params.id; let m=await Match.findOne({ where:{ userId:req.session.userId, propertyId } });
+ const propertyId=req.params.id; const prop=await Property.findByPk(propertyId); if(!prop){ req.flash('message','Propiedad no encontrada'); return res.redirect('/properties'); }
+ let m=await Match.findOne({ where:{ userId:req.session.userId, propertyId } });
  if(!m){ m=await Match.create({ userId:req.session.userId, propertyId, status:'liked' }); req.flash('message','¡Enviado! Si el propietario también te elige, habrá Match.'); }
  else if(m.status==='liked'){ req.flash('message','Ya habías indicado interés por esta propiedad.'); }
  else if(m.status==='rejected'){ m.status='liked'; await m.save(); req.flash('message','Se actualizó tu interés.'); }
