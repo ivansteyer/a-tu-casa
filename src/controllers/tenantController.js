@@ -1,5 +1,5 @@
 const TenantProfile = require('../models/TenantProfile');
-exports.ensureAuth=(req,res,next)=>{ if(!req.session.userId) return res.redirect('/login'); next(); };
+exports.ensureAuth=(req,res,next)=>{ if(!req.session.userId||req.session.role!=='tenant') return res.redirect('/login'); next(); };
 exports.dashboard=async (req,res)=>{ res.render('dashboard'); };
 exports.getStep1=async (req,res)=>{ const profile=await TenantProfile.findOne({ where:{ userId:req.session.userId } }); res.render('tenant/step1',{ profile }); };
 exports.postStep1=async (req,res)=>{ const d=(({profession,seniority,salary,legalStatus,nationality,pets,roommates})=>({profession,seniority,salary,legalStatus,nationality,pets,roommates}))(req.body);
