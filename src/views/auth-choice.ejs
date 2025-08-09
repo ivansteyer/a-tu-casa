@@ -1,0 +1,7 @@
+<%- include('partials/header') %>
+<h2><%= role === 'owner' ? 'Propietario' : 'Inquilino' %></h2>
+<div class="cta-row">
+  <a class="btn" href="/login?role=<%= role %>">Iniciar sesión</a>
+  <a class="btn-outline" href="/register?role=<%= role %>">Registrarse</a>
+</div>
+<%- include('partials/footer') %>
