@@ -1,0 +1,11 @@
+<%- include('../partials/header') %><h2><%= p.title %></h2>
+<% if (message && message.length) { %><div class="flash"><%= message %></div><% } %>
+<p><strong>Ubicación:</strong> <%= p.location || '-' %></p>
+<p><strong>Habitaciones:</strong> <%= p.bedrooms || '-' %></p>
+<p><strong>Terraza:</strong> <%= p.hasTerrace ? 'Sí' : 'No' %></p>
+<p><strong>Modalidad:</strong> <%= p.modality || '-' %></p>
+<p><strong>Disponible desde:</strong> <%= p.availableFrom || '-' %></p>
+<p><strong>Precio:</strong> <%= p.price ? p.price + ' €' : '-' %></p>
+<p><%= p.description || '' %></p>
+<form method="post" action="/properties/<%= p.id %>/like"><button class="btn">Me interesa</button></form>
+<a class="btn-outline" href="/properties">Volver</a><%- include('../partials/footer') %>

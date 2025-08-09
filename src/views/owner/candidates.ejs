@@ -1,0 +1,8 @@
+<%- include('../partials/header') %><h2>Candidatos para: <%= prop.title %></h2>
+<div class="cards"><% candidates.forEach(c=>{ %><article class="card">
+<h3><%= c.User ? c.User.name : ('Perfil #' + c.id) %></h3>
+<p><strong>Profesión:</strong> <%= c.profession || '-' %></p>
+<p><strong>Presupuesto:</strong> <%= c.budget ? c.budget + ' €' : '-' %></p>
+<p><strong>Ubicaciones:</strong> <%= c.locations || '-' %></p>
+<form method="post" action="/owner/properties/<%= prop.id %>/like/<%= c.userId %>"><button class="btn">Me interesa este inquilino</button></form>
+</article><% }) %></div><a class="btn-outline" href="/owner/properties">Volver</a><%- include('../partials/footer') %>

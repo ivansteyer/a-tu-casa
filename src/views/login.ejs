@@ -1,0 +1,7 @@
+<%- include('partials/header') %><h2>Login or join</h2>
+<% if (message && message.length) { %><div class="flash"><%= message %></div><% } %>
+<form method="post" action="/login" class="form">
+<label>Email <input type="email" name="email" required/></label>
+<label>Contraseña <input type="password" name="password" required/></label>
+<button class="btn" type="submit">Ingresar</button></form>
+<p>¿No tienes cuenta? <a href="/register">Regístrate</a></p><%- include('partials/footer') %>

@@ -1,0 +1,4 @@
+<%- include('../partials/header') %><h2>Mis Matches</h2>
+<% if (!matches.length) { %><p>Todavía no tienes matches.</p><% } %>
+<ul><% matches.forEach(m=>{ %><li>Match con propiedad #<%= m.propertyId %></li><% }) %></ul>
+<a class="btn" href="/properties">Explorar propiedades</a><%- include('../partials/footer') %>

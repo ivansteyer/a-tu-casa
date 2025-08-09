@@ -1,0 +1,10 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>A TU CASA</title><link rel="stylesheet" href="/css/styles.css"/></head><body>
+<header class="site-header"><nav class="nav"><a class="brand" href="/">A TU CASA</a>
+<div class="nav-items">
+<% if (userId) { %>
+  <% if (role === "owner") { %><a href="/owner/dashboard">Panel Propietario</a><% } else { %>
+    <a href="/dashboard">Panel</a><a href="/properties">Propiedades</a><a href="/my/matches">Matches</a><% } %>
+  <form method="post" action="/logout" style="display:inline;"><button class="btn-outline" style="margin-left:.5rem">Salir</button></form>
+<% } else { %><a href="/login">Ingresar</a><a href="/register" class="btn">Crear cuenta</a><% } %>
+</div></nav></header><main class="container">

@@ -1,0 +1,5 @@
+<%- include('../partials/header') %><h2>Propiedades disponibles</h2>
+<div class="cards"><% props.forEach(p=>{ %><article class="card">
+<h3><a href="/properties/<%= p.id %>"><%= p.title %></a></h3>
+<p><%= p.location || '' %> — <%= p.bedrooms || 0 %> hab. — <%= p.price ? p.price+'€' : 'Precio a convenir' %></p>
+<a class="btn" href="/properties/<%= p.id %>">Ver</a></article><% }) %></div><%- include('../partials/footer') %>
