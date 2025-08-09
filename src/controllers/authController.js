@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt'); const User = require('../models/User');
-exports.getLogin=(req,res)=> res.render('login',{ message:req.flash('message') });
+exports.getLogin=(req,res)=> res.render('login',{ message:req.flash('message'), role:req.query.role });
 exports.postLogin=async (req,res)=>{ const { email,password }=req.body; const user=await User.findOne({ where:{ email } });
  if(!user){ req.flash('message','Usuario no encontrado'); return res.redirect('/login'); }
  const ok=await bcrypt.compare(password,user.passwordHash);
@@ -11,3 +11,4 @@ exports.postRegister=async (req,res)=>{ const {name,email,password,role}=req.bod
  const passwordHash=await bcrypt.hash(password,10); const user=await User.create({ name,email,passwordHash,role });
  req.session.userId=user.id; req.session.role=user.role; if(user.role==='owner'){ res.redirect('/owner/dashboard'); } else { res.redirect('/onboarding/step1'); } };
 exports.logout=(req,res)=>{ req.session.destroy(()=>res.redirect('/')); };
+exports.getAuthChoice=(req,res)=> res.render('auth-choice',{ role:req.query.role });
