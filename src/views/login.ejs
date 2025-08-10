@@ -20,13 +20,3 @@
 </p>
 
 <%- include('partials/footer') %>
-Y asegúrate de que en el controlador pases el rol (con valor por defecto):
-
-js
-Copiar
-Editar
-// authController.js
-exports.getLogin = (req, res) => {
-  const role = req.query.role || 'tenant';
-  res.render('login', { message: req.flash('message'), role });
-};
