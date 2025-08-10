@@ -1,15 +1,16 @@
 const Property = require('../models/Property');
+const PropertyPhoto = require('../models/PropertyPhoto');
 const Match = require('../models/Match');
 const TenantProfile = require('../models/TenantProfile');
 const User = require('../models/User');
 
 const list = async (req, res) => {
-  const props = await Property.findAll();
+  const props = await Property.findAll({ include: [{ model: PropertyPhoto, as: 'fotos' }] });
   res.render('properties/list', { props });
 };
 
 const detail = async (req, res) => {
-  const p = await Property.findByPk(req.params.id);
+  const p = await Property.findByPk(req.params.id, { include: [{ model: PropertyPhoto, as: 'fotos' }] });
   if (!p) {
     req.flash('message', 'Propiedad no encontrada');
     return res.redirect('/properties');
@@ -30,22 +31,17 @@ const like = async (req, res) => {
     req.flash('message', 'Debes ingresar como inquilino');
     return res.redirect('/login');
   }
-
   const propertyId = req.params.id;
   const prop = await Property.findByPk(propertyId);
   if (!prop) {
     req.flash('message', 'Propiedad no encontrada');
     return res.redirect('/properties');
   }
-
   let m = await Match.findOne({ where: { userId: req.session.userId, propertyId } });
-
   if (!m) {
-    // Primer "like" del inquilino
     m = await Match.create({ userId: req.session.userId, propertyId, status: 'liked' });
     req.flash('message', '¡Enviado! Si el propietario también te elige, habrá Match.');
   } else if (m.status === 'liked') {
-    // Si ya existía un "like" (p.ej. del propietario), ahora pasa a match
     m.status = 'matched';
     await m.save();
     req.flash('message', '¡Se produjo un Match con el propietario!');
@@ -56,7 +52,6 @@ const like = async (req, res) => {
   } else {
     req.flash('message', '¡Ya hay Match en esta propiedad!');
   }
-
   return res.redirect('/properties/' + propertyId);
 };
 
@@ -64,7 +59,7 @@ const ownerList = async (req, res) => {
   if (!req.session.userId || req.session.role !== 'owner') {
     return res.redirect('/login');
   }
-  const props = await Property.findAll({ where: { ownerId: req.session.userId } });
+  const props = await Property.findAll({ where: { ownerId: req.session.userId }, include: [{ model: PropertyPhoto, as: 'fotos' }] });
   res.render('owner/properties', { props });
 };
 
@@ -79,9 +74,76 @@ const postNew = async (req, res) => {
   if (!req.session.userId || req.session.role !== 'owner') {
     return res.redirect('/login');
   }
-  const d = { ...req.body, ownerId: req.session.userId };
-  d.hasTerrace = !!req.body.hasTerrace;
-  await Property.create(d);
+  const d = {
+    ownerId: req.session.userId,
+    titulo: req.body.titulo,
+    tipo: req.body.tipo,
+    habitaciones: req.body.habitaciones ? parseInt(req.body.habitaciones) : null,
+    ubicacion: req.body.ubicacion,
+    terraza: !!req.body.terraza,
+    precio: req.body.precio ? parseInt(req.body.precio) : null,
+    modalidad: req.body.modalidad,
+    disponibleDesde: req.body.disponibleDesde || null,
+    descripcion: req.body.descripcion,
+  };
+  const prop = await Property.create(d);
+  if (req.files) {
+    for (const f of req.files) {
+      await PropertyPhoto.create({ propertyId: prop.id, rutaFoto: `properties/${f.filename}` });
+    }
+  }
+  res.redirect('/owner/properties');
+};
+
+const getEdit = async (req, res) => {
+  if (!req.session.userId || req.session.role !== 'owner') {
+    return res.redirect('/login');
+  }
+  const prop = await Property.findOne({ where: { id: req.params.id, ownerId: req.session.userId }, include: [{ model: PropertyPhoto, as: 'fotos' }] });
+  if (!prop) {
+    req.flash('message', 'Propiedad no encontrada');
+    return res.redirect('/owner/properties');
+  }
+  res.render('owner/edit', { prop });
+};
+
+const update = async (req, res) => {
+  if (!req.session.userId || req.session.role !== 'owner') {
+    return res.redirect('/login');
+  }
+  const prop = await Property.findOne({ where: { id: req.params.id, ownerId: req.session.userId } });
+  if (!prop) {
+    req.flash('message', 'Propiedad no encontrada');
+    return res.redirect('/owner/properties');
+  }
+  const d = {
+    titulo: req.body.titulo,
+    tipo: req.body.tipo,
+    habitaciones: req.body.habitaciones ? parseInt(req.body.habitaciones) : null,
+    ubicacion: req.body.ubicacion,
+    terraza: !!req.body.terraza,
+    precio: req.body.precio ? parseInt(req.body.precio) : null,
+    modalidad: req.body.modalidad,
+    disponibleDesde: req.body.disponibleDesde || null,
+    descripcion: req.body.descripcion,
+  };
+  await prop.update(d);
+  if (req.files) {
+    for (const f of req.files) {
+      await PropertyPhoto.create({ propertyId: prop.id, rutaFoto: `properties/${f.filename}` });
+    }
+  }
+  res.redirect('/owner/properties');
+};
+
+const remove = async (req, res) => {
+  if (!req.session.userId || req.session.role !== 'owner') {
+    return res.redirect('/login');
+  }
+  const prop = await Property.findOne({ where: { id: req.params.id, ownerId: req.session.userId } });
+  if (prop) {
+    await prop.destroy();
+  }
   res.redirect('/owner/properties');
 };
 
@@ -141,6 +203,9 @@ module.exports = {
   ownerList,
   getNew,
   postNew,
+  getEdit,
+  update,
+  remove,
   candidates,
   ownerLikeTenant,
 };

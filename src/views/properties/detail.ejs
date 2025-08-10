@@ -1,11 +1,18 @@
-<%- include('../partials/header') %><h2><%= p.title %></h2>
+<%- include('../partials/header') %><h2><%= p.titulo %></h2>
 <% if (message && message.length) { %><div class="flash"><%= message %></div><% } %>
-<p><strong>Ubicación:</strong> <%= p.location || '-' %></p>
-<p><strong>Habitaciones:</strong> <%= p.bedrooms || '-' %></p>
-<p><strong>Terraza:</strong> <%= p.hasTerrace ? 'Sí' : 'No' %></p>
-<p><strong>Modalidad:</strong> <%= p.modality || '-' %></p>
-<p><strong>Disponible desde:</strong> <%= p.availableFrom || '-' %></p>
-<p><strong>Precio:</strong> <%= p.price ? p.price + ' €' : '-' %></p>
-<p><%= p.description || '' %></p>
+<% if (p.fotos && p.fotos.length) { %>
+  <div class="cards">
+  <% p.fotos.forEach(f=>{ %>
+    <img src="/uploads/<%= f.rutaFoto %>" style="max-width:200px;"/>
+  <% }) %>
+  </div>
+<% } %>
+<p><strong>Ubicación:</strong> <%= p.ubicacion || '-' %></p>
+<p><strong>Habitaciones:</strong> <%= p.habitaciones || '-' %></p>
+<p><strong>Terraza:</strong> <%= p.terraza ? 'Sí' : 'No' %></p>
+<p><strong>Modalidad:</strong> <%= p.modalidad || '-' %></p>
+<p><strong>Disponible desde:</strong> <%= p.disponibleDesde || '-' %></p>
+<p><strong>Precio:</strong> <%= p.precio ? p.precio + ' €' : '-' %></p>
+<p><%= p.descripcion || '' %></p>
 <form method="post" action="/properties/<%= p.id %>/like"><button class="btn">Me interesa</button></form>
 <a class="btn-outline" href="/properties">Volver</a><%- include('../partials/footer') %>

@@ -1,4 +1,18 @@
-<%- include('../partials/header') %><h2>Mis propiedades</h2><a class="btn" href="/owner/properties/new">Nueva propiedad</a>
-<div class="cards"><% props.forEach(p=>{ %><article class="card"><h3><%= p.title %></h3>
-<p><%= p.location || '' %> — <%= p.bedrooms || 0 %> hab. — <%= p.price ? p.price+'€' : 'Precio a convenir' %></p>
-<a class="btn" href="/owner/properties/<%= p.id %>/candidates">Ver candidatos</a></article><% }) %></div><%- include('../partials/footer') %>
+<%- include('../partials/header') %>
+<h2>Mis propiedades</h2>
+<a class="btn" href="/owner/properties/new">Nueva propiedad</a>
+<div class="cards">
+<% props.forEach(p=>{ %>
+  <article class="card">
+    <h3><%= p.titulo %></h3>
+    <% if (p.fotos && p.fotos.length) { %>
+      <img src="/uploads/<%= p.fotos[0].rutaFoto %>" style="max-width:200px;"/>
+    <% } %>
+    <p><%= p.ubicacion || '' %> — <%= p.habitaciones || 0 %> hab. — <%= p.precio ? p.precio+'€' : 'Precio a convenir' %></p>
+    <a class="btn" href="/owner/properties/<%= p.id %>/candidates">Ver candidatos</a>
+    <a class="btn" href="/owner/properties/<%= p.id %>/edit">Editar</a>
+    <form method="post" action="/owner/properties/<%= p.id %>?_method=DELETE" style="display:inline"><button class="btn-outline">Eliminar</button></form>
+  </article>
+<% }) %>
+</div>
+<%- include('../partials/footer') %>
