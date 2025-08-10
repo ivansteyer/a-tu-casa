@@ -1,10 +1,43 @@
-<%- include('../partials/header') %><h2>Cuéntanos sobre ti</h2>
+<%- include('../partials/header') %>
+<h2>Cuéntanos sobre ti</h2>
 <form method="post" action="/onboarding/step1" class="form grid">
-<label>Profesión <input type="text" name="profession" value="<%= profile?.profession || '' %>" required/></label>
-<label>Antigüedad <input type="text" name="seniority" value="<%= profile?.seniority || '' %>"/></label>
-<label>Salario <input type="number" name="salary" value="<%= profile?.salary || '' %>"/></label>
-<label>Estado legal en España <input type="text" name="legalStatus" value="<%= profile?.legalStatus || '' %>"/></label>
-<label>Nacionalidad <input type="text" name="nationality" value="<%= profile?.nationality || '' %>"/></label>
-<label>Mascotas <input type="text" name="pets" value="<%= profile?.pets || '' %>"/></label>
-<label>¿Con quién buscas alquilar? <input type="text" name="roommates" value="<%= profile?.roommates || '' %>"/></label>
-<button class="btn" type="submit">Siguiente</button></form><%- include('../partials/footer') %>
+  <label
+    >Profesión
+    <input
+      type="text"
+      name="profession"
+      value="<%= profile?.profession || '' %>"
+      required
+  /></label>
+  <label
+    >Antigüedad
+    <input type="text" name="seniority" value="<%= profile?.seniority || '' %>"
+  /></label>
+  <label
+    >Salario
+    <input type="number" name="salary" value="<%= profile?.salary || '' %>"
+  /></label>
+  <label
+    >Estado legal en España
+    <input
+      type="text"
+      name="legalStatus"
+      value="<%= profile?.legalStatus || '' %>"
+  /></label>
+  <label
+    >Nacionalidad
+    <input
+      type="text"
+      name="nationality"
+      value="<%= profile?.nationality || '' %>"
+  /></label>
+  <label
+    >Mascotas <input type="text" name="pets" value="<%= profile?.pets || '' %>"
+  /></label>
+  <label
+    >¿Con quién buscas alquilar?
+    <input type="text" name="roommates" value="<%= profile?.roommates || '' %>"
+  /></label>
+  <button class="btn" type="submit">Siguiente</button>
+</form>
+<%- include('../partials/footer') %>

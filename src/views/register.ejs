@@ -4,6 +4,8 @@
 <label>Nombre <input type="text" name="name" required/></label>
 <label>Email <input type="email" name="email" required/></label>
 <label>Contraseña <input type="password" name="password" required/></label>
-<label>Rol <select name="role"><option value="tenant" <%= (req.query.role!=='owner')?'selected':'' %>>Soy Inquilino</option>
-<option value="owner" <%= (req.query.role==='owner')?'selected':'' %>>Soy Propietario</option></select></label>
+<label>Rol <select name="role"><option value="tenant" <%= (role !== 'owner') ? 'selected' : '' %>>Soy Inquilino</option>
+<option value="owner" <%= (role === 'owner') ? 'selected' : '' %>>Soy Propietario</option></select></label>
 <button class="btn" type="submit">Crear</button></form><%- include('partials/footer') %>
+
+
