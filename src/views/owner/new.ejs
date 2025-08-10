@@ -1,12 +1,16 @@
-<%- include('../partials/header') %><h2>Nueva propiedad</h2>
-<form class="form grid" method="post" action="/owner/properties">
-<label>Título <input name="title" required></label>
-<label>Tipo <input name="type" placeholder="PISO / CASA"></label>
-<label>Habitaciones <input name="bedrooms" type="number" min="0"></label>
-<label>Ubicación <input name="location"></label>
-<label><input type="checkbox" name="hasTerrace"> ¿Tiene terraza?</label>
-<label>Precio (€/mes) <input name="price" type="number" min="0"></label>
-<label>Modalidad <input name="modality" placeholder="Larga estancia / Temporal"></label>
-<label>Disponible desde <input name="availableFrom" placeholder="2025-09-01"></label>
-<label>Descripción <textarea name="description" rows="4"></textarea></label>
-<button class="btn">Publicar</button></form><%- include('../partials/footer') %>
+<%- include('../partials/header') %>
+<h2>Nueva propiedad</h2>
+<form class="form grid" method="post" action="/owner/properties/new" enctype="multipart/form-data">
+<label>Título <input name="titulo" required></label>
+<label>Tipo <input name="tipo" placeholder="piso / casa"></label>
+<label>Habitaciones <input name="habitaciones" type="number" min="0"></label>
+<label>Ubicación <input name="ubicacion"></label>
+<label><input type="checkbox" name="terraza"> ¿Tiene terraza?</label>
+<label>Precio (€/mes) <input name="precio" type="number" min="0"></label>
+<label>Modalidad <input name="modalidad" placeholder="alquiler / venta"></label>
+<label>Disponible desde <input name="disponibleDesde" type="date"></label>
+<label>Descripción <textarea name="descripcion" rows="4"></textarea></label>
+<label>Fotos <input type="file" name="fotos" multiple></label>
+<button class="btn">Publicar</button>
+</form>
+<%- include('../partials/footer') %>
