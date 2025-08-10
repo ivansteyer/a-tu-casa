@@ -1,12 +1,32 @@
 <%- include('partials/header') %>
-<h2>Login or join</h2>
+
+<% const safeRole = role || 'tenant'; 
+   const label = safeRole === 'owner' ? 'Propietario' : 'Inquilino'; %>
+
+<h2>Iniciar sesión como <%= label %></h2>
+
 <% if (message && message.length) { %>
-<div class="flash"><%= message %></div>
+  <div class="flash"><%= message %></div>
 <% } %>
+
 <form method="post" action="/login" class="form">
   <label>Email <input type="email" name="email" required /></label>
   <label>Contraseña <input type="password" name="password" required /></label>
   <button class="btn" type="submit">Ingresar</button>
 </form>
-<p>¿No tienes cuenta? <a href="/register">Regístrate</a></p>
+
+<p>¿No tienes cuenta? 
+  <a href="/register?role=<%= safeRole %>">Regístrate</a>
+</p>
+
 <%- include('partials/footer') %>
+Y asegúrate de que en el controlador pases el rol (con valor por defecto):
+
+js
+Copiar
+Editar
+// authController.js
+exports.getLogin = (req, res) => {
+  const role = req.query.role || 'tenant';
+  res.render('login', { message: req.flash('message'), role });
+};
