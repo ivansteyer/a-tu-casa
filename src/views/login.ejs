@@ -1,23 +1,13 @@
 <%- include('partials/header') %>
-<<<<<<< HEAD
-<h2>Login or join</h2>
-<% if (message && message.length) { %>
-<div class="flash"><%= message %></div>
-<% } %>
-<form method="post" action="/login" class="form">
-  <label>Email <input type="email" name="email" required /></label>
-  <label>Contraseña <input type="password" name="password" required /></label>
-  <button class="btn" type="submit">Ingresar</button>
-</form>
-<p>¿No tienes cuenta? <a href="/register">Regístrate</a></p>
-<%- include('partials/footer') %>
-=======
 <% const label = role === 'owner' ? 'Propietario' : 'Inquilino'; %>
 <h2>Iniciar sesión<% if (role) { %> como <%= label %><% } %></h2>
-<% if (message && message.length) { %><div class="flash"><%= message %></div><% } %>
+<% if (message && message.length) { %>
+  <div class="flash"><%= message %></div>
+<% } %>
 <form method="post" action="/login" class="form">
-<label>Email <input type="email" name="email" required/></label>
-<label>Contraseña <input type="password" name="password" required/></label>
-<button class="btn" type="submit">Ingresar</button></form>
-<p>¿No tienes cuenta? <a href="/register?role=<%= role %>">Regístrate</a></p><%- include('partials/footer') %>
->>>>>>> f323f8146a407dc9827baf0b2c6125e857baf46e
+  <label>Email <input type="email" name="email" required/></label>
+  <label>Contraseña <input type="password" name="password" required/></label>
+  <button class="btn" type="submit">Ingresar</button>
+</form>
+<p>¿No tienes cuenta? <a href="/register?role=<%= role %>">Regístrate</a></p>
+<%- include('partials/footer') %>
