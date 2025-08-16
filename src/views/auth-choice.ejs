@@ -1,7 +1,18 @@
 <%- include('partials/header') %>
-<h2><%= role === 'owner' ? 'Propietario' : 'Inquilino' %></h2>
+
+<% 
+  const safeRole = role === 'owner' ? 'owner' : 'tenant';
+  const label = safeRole === 'owner' ? 'Propietario' : 'Inquilino';
+  const tagline = safeRole === 'owner'
+    ? 'Tu piso, tu decisión: inquilinos validados y transparentes. Deja de buscar, empieza a elegir.'
+    : 'Accedé a alquileres donde tu perfil vale más que tu rapidez.';
+%>
+
+<p class="sub"><%= tagline %></p>
+
 <div class="cta-row">
-  <a class="btn" href="/login?role=<%= role %>">Iniciar sesión</a>
-  <a class="btn-outline" href="/register?role=<%= role %>">Registrarse</a>
+  <a class="btn" href="/login?role=<%= safeRole %>">Iniciar sesión</a>
+  <a class="btn-outline" href="/register?role=<%= safeRole %>">Registrarse</a>
 </div>
+
 <%- include('partials/footer') %>
