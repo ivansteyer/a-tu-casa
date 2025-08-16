@@ -14,6 +14,6 @@ exports.getRegister=(req,res)=>
 exports.postRegister=async (req,res)=>{ const {name,email,password,role}=req.body;
  const exists=await User.findOne({ where:{ email } }); if(exists){ req.flash('message','El email ya está registrado'); return res.redirect('/register'); }
  const passwordHash=await bcrypt.hash(password,10); const user=await User.create({ name,email,passwordHash,role });
- req.session.userId=user.id; req.session.role=user.role; req.session.save(()=>{ if(user.role==='owner') return res.redirect('/owner/dashboard'); res.redirect('/onboarding/step1'); }); };
+ req.session.userId=user.id; req.session.role=user.role; req.session.save(()=>{ if(user.role==='owner') return res.redirect('/owner/profile'); res.redirect('/onboarding/step1'); }); };
 exports.logout=(req,res)=>{ req.session.destroy(()=>res.redirect('/')); };
 exports.getAuthChoice=(req,res)=> res.render('auth-choice',{ role:req.query.role });

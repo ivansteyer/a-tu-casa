@@ -35,7 +35,7 @@ exports.postProfile = async (req, res) => {
   } else {
     await OwnerProfile.create(data);
   }
-  res.redirect('/owner/profile');
+  res.redirect('/owner/preferences');
 };
 
 exports.getPreferences = async (req, res) => {
@@ -62,5 +62,5 @@ exports.postPreferences = async (req, res) => {
   } else {
     await OwnerPreference.create(data);
   }
-  res.redirect('/owner/preferences');
+  res.redirect('/owner/dashboard');
 };
