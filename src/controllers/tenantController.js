@@ -253,17 +253,19 @@ exports.getFinds = async (req, res, next) => {
     const { candidates, cursor } = req.session;
     const currentId = candidates?.[cursor];
 
-    let property = null;
-    if (currentId) {
-      property = await getPropertyById(currentId);
-    }
+ let propertyRaw = null;
+if (currentId) {
+  propertyRaw = await getPropertyById(currentId);
+}
+const property = mapPropertyForClient(propertyRaw);
 
-    res.render("tenant/finds", {
-      title: "Encuentra tu piso",
-      property,
-      hasMore: Boolean(property),
-      baseUrl: req.baseUrl || "/tenant",
-    });
+res.render("tenant/finds", {
+  title: "Encuentra tu piso",
+  property,                         // <- ya viene normalizado
+  hasMore: Boolean(property),
+  baseUrl: req.baseUrl || "/tenant",
+});
+
   } catch (err) {
     next(err);
   }

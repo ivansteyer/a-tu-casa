@@ -1,18 +1,29 @@
-<%- include('../partials/header') %><h2><%= p.titulo %></h2>
-<% if (message && message.length) { %><div class="flash"><%= message %></div><% } %>
-<% if (p.fotos && p.fotos.length) { %>
+<%- include('../partials/header') %>
+<h2><%= p.titulo %></h2>
+
+<% if (message && message.length) { %>
+  <div class="flash"><%= message %></div>
+<% } %>
+
+<% if (p.photosArr && p.photosArr.length) { %>
   <div class="cards">
-  <% p.fotos.forEach(f=>{ %>
-    <img src="/uploads/<%= f.rutaFoto %>" style="max-width:200px;"/>
-  <% }) %>
+    <% p.photosArr.forEach(url => { %>
+      <img src="/uploads/<%= url %>" alt="Foto" style="max-width:200px;" />
+    <% }) %>
   </div>
 <% } %>
+
 <p><strong>Ubicación:</strong> <%= p.ubicacion || '-' %></p>
 <p><strong>Habitaciones:</strong> <%= p.habitaciones || '-' %></p>
 <p><strong>Terraza:</strong> <%= p.terraza ? 'Sí' : 'No' %></p>
 <p><strong>Modalidad:</strong> <%= p.modalidad || '-' %></p>
 <p><strong>Disponible desde:</strong> <%= p.disponibleDesde || '-' %></p>
-<p><strong>Precio:</strong> <%= p.precio ? p.precio + ' €' : '-' %></p>
+<p><strong>Precio:</strong> <%= p.precio ? (p.precio + ' €') : '-' %></p>
 <p><%= p.descripcion || '' %></p>
-<form method="post" action="/properties/<%= p.id %>/like"><button class="btn">Me interesa</button></form>
-<a class="btn-outline" href="/properties">Volver</a><%- include('../partials/footer') %>
+
+<form method="post" action="/properties/<%= p.id %>/like">
+  <button class="btn">Me interesa</button>
+</form>
+
+<a class="btn-outline" href="/properties">Volver</a>
+<%- include('../partials/footer') %>

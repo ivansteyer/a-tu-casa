@@ -11,9 +11,14 @@
     <div class="card" id="card" data-id="<%= property.id %>">
       <div class="image-carousel" id="carousel">
         <button class="nav-btn left" id="btnPrev">&lt;</button>
-        <img id="photo"
-             src="<%= Array.isArray(property.photos) && property.photos.length ? property.photos[0] : '/images/placeholder.jpg' %>"
-             alt="Foto del piso">
+        <img
+          id="photo"
+          src="<%= (Array.isArray(property.photos) && property.photos.length)
+                ? (property.photos[0].startsWith('http') || property.photos[0].startsWith('/')
+                    ? property.photos[0]
+                    : '/uploads/' + property.photos[0])
+                : '/images/placeholder.jpg' %>"
+          alt="Foto del piso">
         <button class="nav-btn right" id="btnNext">&gt;</button>
       </div>
 
@@ -23,6 +28,12 @@
           <div class="tag"><i class="fa-solid fa-bed"></i> <%= property.bedrooms ?? 0 %> habitaciones</div>
           <div class="tag"><%= property.stayType ?? '' %></div>
           <div class="tag"><i class="fa-solid fa-location-dot"></i> <%= property.neighborhood ?? '' %></div>
+          <% if (typeof property.terrace !== 'undefined') { %>
+            <div class="tag">Terraza: <%= property.terrace ? 'Sí' : 'No' %></div>
+          <% } %>
+          <% if (property.availableFrom) { %>
+            <div class="tag"><i class="fa-solid fa-calendar-days"></i> <%= property.availableFrom %></div>
+          <% } %>
           <% if (property.price) { %>
             <div class="tag">€ <%= property.price %>/mes</div>
           <% } %>
@@ -42,7 +53,10 @@
   const card = document.getElementById('card');
   if (!card) return; // no hay pisos
 
-  let photos = <%- JSON.stringify(property.photos || []) %>;
+  // Normaliza URLs de fotos: si no empiezan por http/ /, antepone /uploads/
+  const normalize = u => (typeof u === 'string' && !u.startsWith('http') && !u.startsWith('/')) ? '/uploads/' + u : u;
+
+  let photos = (<%- JSON.stringify(property.photos || []) %>).map(normalize);
   let photoIdx = 0;
 
   const photoEl = document.getElementById('photo');
@@ -93,7 +107,8 @@
 
       const p = data.next;
       card.dataset.id = p.id;
-      photos = Array.isArray(p.photos) ? p.photos : [];
+
+      photos = Array.isArray(p.photos) ? p.photos.map(normalize) : [];
       photoIdx = 0;
       photoEl.src = photos.length ? photos[0] : '/images/placeholder.jpg';
 
@@ -102,6 +117,8 @@
         <div class="tag"><i class="fa-solid fa-bed"></i> ${p.bedrooms ?? 0} habitaciones</div>
         <div class="tag">${p.stayType ?? ''}</div>
         <div class="tag"><i class="fa-solid fa-location-dot"></i> ${p.neighborhood ?? ''}</div>
+        ${typeof p.terrace !== 'undefined' ? `<div class="tag">Terraza: ${p.terrace ? 'Sí' : 'No'}</div>` : ''}
+        ${p.availableFrom ? `<div class="tag"><i class="fa-solid fa-calendar-days"></i> ${p.availableFrom}</div>` : ''}
         ${p.price ? `<div class="tag">€ ${p.price}/mes</div>` : ''}
       `;
       card.querySelector('.tags').innerHTML = tagsHtml;

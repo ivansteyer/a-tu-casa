@@ -1,20 +1,40 @@
 const Property = require('../models/Property');
-const PropertyPhoto = require('../models/PropertyPhoto');
+// Si todavía no usas la tabla de fotos, puedes comentar esta línea:
+// const PropertyPhoto = require('../models/PropertyPhoto');
 const Match = require('../models/Match');
 const TenantProfile = require('../models/TenantProfile');
 const User = require('../models/User');
 
+/**
+ * Parse safe del TEXT photos -> array de strings
+ */
+function toPlainWithPhotos(modelOrPlain) {
+  const p = modelOrPlain?.get ? modelOrPlain.get({ plain: true }) : modelOrPlain;
+  let photosArr = [];
+  try {
+    if (p && p.photos) {
+      const parsed = JSON.parse(p.photos);
+      if (Array.isArray(parsed)) photosArr = parsed;
+    }
+  } catch (_) {}
+  return { ...p, photosArr };
+}
+
 const list = async (req, res) => {
-  const props = await Property.findAll({ include: [{ model: PropertyPhoto, as: 'fotos' }] });
+  const rows = await Property.findAll({
+    order: [['createdAt', 'DESC']],
+  });
+  const props = rows.map(toPlainWithPhotos);
   res.render('properties/list', { props });
 };
 
 const detail = async (req, res) => {
-  const p = await Property.findByPk(req.params.id, { include: [{ model: PropertyPhoto, as: 'fotos' }] });
-  if (!p) {
+  const row = await Property.findByPk(req.params.id);
+  if (!row) {
     req.flash('message', 'Propiedad no encontrada');
     return res.redirect('/properties');
   }
+  const p = toPlainWithPhotos(row);
   res.render('properties/detail', { p, message: req.flash('message') });
 };
 
@@ -59,7 +79,11 @@ const ownerList = async (req, res) => {
   if (!req.session.userId || req.session.role !== 'owner') {
     return res.redirect('/login');
   }
-  const props = await Property.findAll({ where: { ownerId: req.session.userId }, include: [{ model: PropertyPhoto, as: 'fotos' }] });
+  const rows = await Property.findAll({
+    where: { ownerId: req.session.userId },
+    order: [['createdAt', 'DESC']],
+  });
+  const props = rows.map(toPlainWithPhotos);
   res.render('owner/properties', { props });
 };
 
@@ -74,6 +98,10 @@ const postNew = async (req, res) => {
   if (!req.session.userId || req.session.role !== 'owner') {
     return res.redirect('/login');
   }
+
+  // Construimos URLs de fotos para guardar también en properties.photos (JSON)
+  const photoUrls = (req.files || []).map(f => `properties/${f.filename}`);
+
   const d = {
     ownerId: req.session.userId,
     titulo: req.body.titulo,
@@ -85,13 +113,32 @@ const postNew = async (req, res) => {
     modalidad: req.body.modalidad,
     disponibleDesde: req.body.disponibleDesde || null,
     descripcion: req.body.descripcion,
+    m2: req.body.m2 ? parseInt(req.body.m2) : null,
+    ascensor: !!req.body.ascensor,
+    altura: req.body.altura ? parseInt(req.body.altura) : null,
+    // Guardamos también el JSON como fallback para no depender del JOIN
+    photos: photoUrls.length ? JSON.stringify(photoUrls) : null,
+    
   };
+
   const prop = await Property.create(d);
-  if (req.files) {
-    for (const f of req.files) {
-      await PropertyPhoto.create({ propertyId: prop.id, rutaFoto: `properties/${f.filename}` });
+
+  // Si tienes la tabla property_photos, seguimos creando registros. Si no existe, no rompemos.
+  try {
+    const PropertyPhoto = require('../models/PropertyPhoto');
+    if (photoUrls.length && PropertyPhoto?.bulkCreate) {
+      await PropertyPhoto.bulkCreate(
+        photoUrls.map((rutaFoto, i) => ({
+          propertyId: prop.id,
+          rutaFoto,
+          orden: i,
+        }))
+      );
     }
+  } catch (e) {
+    // Silencioso: si no existe el modelo/tabla, seguimos sin fallar.
   }
+
   res.redirect('/owner/properties');
 };
 
@@ -99,11 +146,14 @@ const getEdit = async (req, res) => {
   if (!req.session.userId || req.session.role !== 'owner') {
     return res.redirect('/login');
   }
-  const prop = await Property.findOne({ where: { id: req.params.id, ownerId: req.session.userId }, include: [{ model: PropertyPhoto, as: 'fotos' }] });
-  if (!prop) {
+  const row = await Property.findOne({
+    where: { id: req.params.id, ownerId: req.session.userId },
+  });
+  if (!row) {
     req.flash('message', 'Propiedad no encontrada');
     return res.redirect('/owner/properties');
   }
+  const prop = toPlainWithPhotos(row);
   res.render('owner/edit', { prop });
 };
 
@@ -116,6 +166,7 @@ const update = async (req, res) => {
     req.flash('message', 'Propiedad no encontrada');
     return res.redirect('/owner/properties');
   }
+
   const d = {
     titulo: req.body.titulo,
     tipo: req.body.tipo,
@@ -126,13 +177,46 @@ const update = async (req, res) => {
     modalidad: req.body.modalidad,
     disponibleDesde: req.body.disponibleDesde || null,
     descripcion: req.body.descripcion,
+    m2: req.body.m2 ? parseInt(req.body.m2) : null,
+    ascensor: !!req.body.ascensor,
+    altura: req.body.altura ? parseInt(req.body.altura) : null,
   };
-  await prop.update(d);
-  if (req.files) {
-    for (const f of req.files) {
-      await PropertyPhoto.create({ propertyId: prop.id, rutaFoto: `properties/${f.filename}` });
+
+  // Nuevas fotos subidas en esta edición
+  const newPhotoUrls = (req.files || []).map(f => `properties/${f.filename}`);
+
+  // Mezclamos con las fotos existentes del JSON
+  let currentPhotos = [];
+  try {
+    if (prop.photos) {
+      const parsed = JSON.parse(prop.photos);
+      if (Array.isArray(parsed)) currentPhotos = parsed;
     }
+  } catch (_) {}
+
+  const mergedPhotos = [...currentPhotos, ...newPhotoUrls];
+  d.photos = mergedPhotos.length ? JSON.stringify(mergedPhotos) : null;
+
+  await prop.update(d);
+
+  // Intento opcional de crear también en property_photos (si existe)
+  try {
+    const PropertyPhoto = require('../models/PropertyPhoto');
+    if (newPhotoUrls.length && PropertyPhoto?.bulkCreate) {
+      // calcular índice de orden inicial según cuántas había
+      const start = currentPhotos.length;
+      await PropertyPhoto.bulkCreate(
+        newPhotoUrls.map((rutaFoto, i) => ({
+          propertyId: prop.id,
+          rutaFoto,
+          orden: start + i,
+        }))
+      );
+    }
+  } catch (e) {
+    // Silencioso si la tabla no existe.
   }
+
   res.redirect('/owner/properties');
 };
 

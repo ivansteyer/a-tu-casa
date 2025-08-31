@@ -1,6 +1,20 @@
-<%- include('../partials/header') %><h2>Propiedades disponibles</h2>
-<div class="cards"><% props.forEach(p=>{ %><article class="card">
-<h3><a href="/properties/<%= p.id %>"><%= p.titulo %></a></h3>
-<% if (p.fotos && p.fotos.length) { %><img src="/uploads/<%= p.fotos[0].rutaFoto %>" style="max-width:200px;"/><% } %>
-<p><%= p.ubicacion || '' %> — <%= p.habitaciones || 0 %> hab. — <%= p.precio ? p.precio+'€' : 'Precio a convenir' %></p>
-<a class="btn" href="/properties/<%= p.id %>">Ver</a></article><% }) %></div><%- include('../partials/footer') %>
+<%- include('../partials/header') %>
+<h2>Propiedades disponibles</h2>
+<div class="cards">
+  <% props.forEach(p=>{ %>
+  <article class="card">
+    <h3><a href="/properties/<%= p.id %>"><%= p.titulo %></a></h3>
+
+    <% if (p.photosArr && p.photosArr.length) { %>
+      <img src="/uploads/<%= p.photosArr[0] %>" alt="Foto principal" style="max-width: 200px" />
+    <% } %>
+
+    <p>
+      <%= p.ubicacion || '' %> — <%= p.habitaciones || 0 %> hab. — 
+      <%= p.precio ? (p.precio + '€') : 'Precio a convenir' %>
+    </p>
+    <a class="btn" href="/properties/<%= p.id %>">Ver</a>
+  </article>
+  <% }) %>
+</div>
+<%- include('../partials/footer') %>
