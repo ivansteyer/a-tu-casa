@@ -11,22 +11,22 @@ const Property = sequelize.define('Property', {
   titulo: { type: DataTypes.STRING, allowNull: false },
 
   // ===== Atributos que usan tus controllers (mapeados a columnas en español) =====
-  propertyType: { type: DataTypes.STRING, field: 'tipo' },                // Tipo: piso completo / habitación
-  bedrooms:     { type: DataTypes.INTEGER, field: 'habitaciones' },       // Habitaciones
-  sizeM2:       { type: DataTypes.INTEGER, field: 'm2', allowNull: true },// M2 (nueva)
-  stayType:     { type: DataTypes.STRING, field: 'modalidad' },           // Tipo de contrato
-  neighborhood: { type: DataTypes.STRING, field: 'ubicacion' },           // Ubicación
+  propertyType: { type: DataTypes.STRING,  field: 'tipo' },                // Tipo de propiedad
+  bedrooms:     { type: DataTypes.INTEGER, field: 'habitaciones' },       // Número de habitaciones
+  sizeM2:       { type: DataTypes.INTEGER, field: 'm2', allowNull: true },// Metros cuadrados
+  stayType:     { type: DataTypes.STRING,  field: 'modalidad' },           // Tipo de contrato
+  neighborhood: { type: DataTypes.STRING,  field: 'ubicacion' },           // Ubicación
   terrace:      { type: DataTypes.BOOLEAN, field: 'terraza' },            // Terraza
-  availableFrom:{ type: DataTypes.DATEONLY, field: 'disponibleDesde' },   // Disponible desde
+  availableFrom:{ type: DataTypes.DATEONLY,field: 'disponibleDesde' },    // Disponible desde
   price:        { type: DataTypes.INTEGER, field: 'precio' },             // Precio
 
-  // Extras nuevos que quieres guardar
-  elevator:     { type: DataTypes.BOOLEAN, field: 'ascensor', allowNull: true }, // Ascensor (nuevo)
+  elevator:     { type: DataTypes.BOOLEAN, field: 'ascensor', allowNull: true }, // Ascensor
+  floorNumber:  { type: DataTypes.INTEGER, field: 'altura', allowNull: true },   // Altura/piso
 
   description:  { type: DataTypes.TEXT, field: 'descripcion' },
 
-  // ===== Nuevos campos que faltaban en la tabla =====
-  photos:       { type: DataTypes.TEXT, allowNull: true },                // JSON.stringify([...]) (nuevo)
+  published:    { type: DataTypes.BOOLEAN, defaultValue: true },          // Publicada
+  photos:       { type: DataTypes.TEXT, allowNull: true },                // JSON.stringify([...])
 }, {
   tableName: 'properties',
   // timestamps por defecto: createdAt / updatedAt
