@@ -1,0 +1,65 @@
+<%- include('../partials/header') %>
+<% const B = (typeof baseUrl !== 'undefined' && baseUrl) ? baseUrl : '/tenant'; %>
+
+<section class="tenant-dash container">
+  <header class="dash-head">
+    <h1>Bienvenido<% if (typeof userName !== 'undefined' && userName) { %>, <%= userName %><% } %></h1>
+    <p class="muted">Tu perfil está <strong><%= typeof profileProgress !== 'undefined' ? profileProgress : 0 %>%</strong> completo</p>
+  </header>
+
+  <div class="dash-grid">
+
+    <!-- Encuentra tu piso -->
+    <a class="dash-tile" href="<%= B %>/finds">
+      <div class="tile-ico">
+        <!-- lupa -->
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 21l-4.3-4.3m1.8-5.2a7 7 0 11-14 0 7 7 0 0114 0z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+      <div class="tile-text">
+        <h3>Encuentra tu piso</h3>
+      </div>
+    </a>
+
+    <!-- Mis Matches -->
+    <a class="dash-tile" href="<%= B %>/matches">
+      <div class="tile-ico">
+        <!-- dos usuarios con check -->
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 11a4 4 0 100-8 4 4 0 000 8zM8 13a4 4 0 100-8 4 4 0 000 8zM2 20a6 6 0 0112 0v1H2v-1zm10.5-4.5l2 2 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="tile-text">
+        <h3>Mis Matches</h3>
+      </div>
+    </a>
+
+    <!-- Chat -->
+    <a class="dash-tile dash-tile--dark" href="<%= B %>/chat">
+      <div class="tile-ico">
+        <!-- globos chat -->
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8a5 5 0 00-5-5H8a5 5 0 000 10h.5V16l4-3H16a5 5 0 005-5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="tile-text">
+        <h3>Chat</h3>
+      </div>
+    </a>
+
+    <!-- Subir documentos -->
+    <a class="dash-tile" href="<%= B %>/onboarding/step3">
+      <div class="tile-ico">
+        <!-- documentos -->
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3h6l4 4v12a2 2 0 01-2 2H8a2 2 0 01-2-2V5a2 2 0 012-2zm6 0v4h4M9 13h6M9 9h3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="tile-text">
+        <h3>Subir documentos</h3>
+      </div>
+    </a>
+  </div>
+
+  <div class="dash-actions">
+    <a class="btn" href="<%= B %>/onboarding/step1">Completar mi perfil</a>
+    <form method="post" action="/logout">
+      <button class="btn-outline" type="submit">Cerrar sesión</button>
+    </form>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

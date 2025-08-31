@@ -1,32 +1,47 @@
 <%- include('../partials/header') %>
-<h2>Preferencias de inquilino</h2>
+<h2>Preferencias</h2>
+<h3>¿Cómo te imaginas a tu próximo inquilino?</h3>
 <form class="form" action="/owner/preferences" method="post">
+  
   <label>Tipo de contrato
-    <input name="tipoContrato" value="<%= pref ? pref.tipoContrato : '' %>">
+    <select name="tipoContrato" required>
+      <option value="" <%= !pref || !pref.tipoContrato ? 'selected' : '' %>>Seleccionar</option>
+      <option value="corto plazo" <%= pref && pref.tipoContrato==='corto plazo' ? 'selected' : '' %>>Temporada</option>
+      <option value="largo plazo" <%= pref && pref.tipoContrato==='largo plazo' ? 'selected' : '' %>>Larga estancia</option>
+    </select>
   </label>
-  <label>Presupuesto mínimo
-    <input type="number" name="presupuestoMinimo" value="<%= pref ? pref.presupuestoMinimo : '' %>">
+
+  <label>Rango de ingresos mensuales (€)
+    <input type="number" name="presupuestoMinimo" min="0" value="<%= pref ? pref.presupuestoMinimo : '' %>">
   </label>
-  <label>Mascotas
+
+ <label>Rango de ingresos mensuales (€)
+    <input type="number" name="presupuestoMinimo" min="0" value="<%= pref ? pref.presupuestoMinimo : '' %>">
+  </label>
+  
+
+  <label>Acepta mascotas
     <select name="mascotas">
-      <option value="" <%= !pref || !pref.mascotas ? 'selected' : '' %>></option>
+      <option value="" <%= !pref || !pref.mascotas ? 'selected' : '' %>>Seleccionar</option>
       <option value="sí" <%= pref && pref.mascotas==='sí' ? 'selected' : '' %>>Sí</option>
       <option value="no" <%= pref && pref.mascotas==='no' ? 'selected' : '' %>>No</option>
       <option value="indiferente" <%= pref && pref.mascotas==='indiferente' ? 'selected' : '' %>>Indiferente</option>
     </select>
   </label>
+
   <label>Número máximo de personas
-    <input type="number" name="maxPersonas" value="<%= pref ? pref.maxPersonas : '' %>">
+    <input type="number" name="maxPersonas" min="1" value="<%= pref ? pref.maxPersonas : '' %>">
   </label>
+
   <label>Profesión preferida
-    <input name="profesionPreferida" value="<%= pref ? pref.profesionPreferida : '' %>">
+    <input type="text" name="profesionPreferida" value="<%= pref ? pref.profesionPreferida : '' %>">
   </label>
-  <label>Nacionalidad preferida
-    <input name="nacionalidadPreferida" value="<%= pref ? pref.nacionalidadPreferida : '' %>">
-  </label>
-  <label>Otros
+
+  <label>Preferencias adicionales? Nuestro equipo se encargara de verificarlo
     <textarea name="otros" rows="4"><%= pref ? pref.otros : '' %></textarea>
   </label>
-  <button class="btn">Guardar</button>
+
+  <button class="btn" type="submit">Guardar preferencias</button>
 </form>
+
 <%- include('../partials/footer') %>

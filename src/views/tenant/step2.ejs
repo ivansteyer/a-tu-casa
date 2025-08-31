@@ -1,11 +1,58 @@
-<%- include('../partials/header') %><h2>Preferencias de la propiedad</h2>
-<form method="post" action="/onboarding/step2" class="form grid">
-<label>Tipo de propiedad <select name="propertyType"><option>CASA</option><option>PISO</option></select></label>
-<label>Habitaciones <select name="bedrooms"><option>Estudio</option><option>1h</option><option>2h</option><option>3h</option><option>+3h</option></select></label>
-<label>Ubicaciones (coma) <input type="text" name="locations" value="<%= profile?.locations || '' %>" /></label>
-<label>Terraza <select name="terrace"><option>Si</option><option>No</option><option>Indiferente</option></select></label>
-<label>Presupuesto (€/mes) <input type="number" name="budget" value="<%= profile?.budget || '' %>" /></label>
-<label>Modalidad <select name="modality"><option>Larga estancia</option><option>Temporal</option></select></label>
-<label>¿Cuándo quieres mudarte? <input type="text" name="moveIn" value="<%= profile?.moveIn || '' %>" /></label>
-<label>Estado (validado) <select name="status"><option>Si</option><option>No</option><option>Indiferente</option></select></label>
-<button class="btn" type="submit">Siguiente</button></form><%- include('../partials/footer') %>
+<%- include('../partials/header') %>
+<h2>Preferencias de la propiedad</h2>
+<form method="post" action="<%= baseUrl %>/onboarding/step2" class="form grid">
+  <label
+    >Tipo de propiedad
+    <select name="propertyType">
+      <option>CASA</option>
+      <option>PISO</option>
+    </select></label
+  >
+  <label
+    >Habitaciones
+    <select name="bedrooms">
+      <option>Estudio</option>
+      <option>1h</option>
+      <option>2h</option>
+      <option>3h</option>
+      <option>+3h</option>
+    </select></label
+  >
+  <label
+    >Ubicaciones (coma)
+    <input type="text" name="locations" value="<%= profile?.locations || '' %>"
+  /></label>
+  <label
+    >Terraza
+    <select name="terrace">
+      <option>Si</option>
+      <option>No</option>
+      <option>Indiferente</option>
+    </select></label
+  >
+  <label
+    >Presupuesto (€/mes)
+    <input type="number" name="budget" value="<%= profile?.budget || '' %>"
+  /></label>
+  <label
+    >Modalidad
+    <select name="modality">
+      <option>Larga estancia</option>
+      <option>Temporal</option>
+    </select></label
+  >
+  <label
+    >¿Cuándo quieres mudarte?
+    <input type="text" name="moveIn" value="<%= profile?.moveIn || '' %>"
+  /></label>
+  <label
+    >Estado (validado)
+    <select name="status">
+      <option>Si</option>
+      <option>No</option>
+      <option>Indiferente</option>
+    </select></label
+  >
+  <button class="btn" type="submit">Siguiente</button>
+</form>
+<%- include('../partials/footer') %>

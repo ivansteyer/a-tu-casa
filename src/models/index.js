@@ -6,3 +6,4 @@ const url =
   "sqlite:" + path.join(__dirname, "../config/dev.sqlite");
 const sequelize = new Sequelize(url, { logging: false });
 module.exports = sequelize;
+ 

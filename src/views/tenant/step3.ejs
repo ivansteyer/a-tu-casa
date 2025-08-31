@@ -1,9 +1,23 @@
-<%- include('../partials/header') %><h2>Subir documentos para validar perfil</h2>
-<form method="post" action="/onboarding/step3" enctype="multipart/form-data" class="form grid">
-<label>NIE/DNI <input type="file" name="idDoc" /></label>
-<label>Última nómina <input type="file" name="lastPayslip" /></label>
-<label>Contrato de trabajo <input type="file" name="workContract" /></label>
-<label>Currículum (PDF) <input type="file" name="cv" /></label>
-<label>Perfil de Linkedin (URL) <input type="url" name="linkedinUrl" value="<%= profile?.linkedinUrl || '' %>" /></label>
-<label>Foto selfie <input type="file" name="selfie" accept="image/*" /></label>
-<button class="btn" type="submit">Finalizar</button></form><%- include('../partials/footer') %>
+<%- include('../partials/header') %>
+<h2>Sube tus documentos</h2>
+<form method="post" enctype="multipart/form-data" action="<%= baseUrl %>/onboarding/step3" class="form grid">
+
+  <label>NIE/DNI <input type="file" name="idDoc" /></label>
+  <label>Última nómina <input type="file" name="lastPayslip" /></label>
+  <label>Contrato de trabajo <input type="file" name="workContract" /></label>
+  <label>Currículum (PDF) <input type="file" name="cv" /></label>
+  <label
+    >Perfil de Linkedin (URL)
+    <input
+      type="url"
+      name="linkedinUrl"
+      value="<%= profile?.linkedinUrl || '' %>"
+  /></label>
+  <label
+    >Foto selfie <input type="file" name="selfie" accept="image/*"
+  /></label>
+
+  <button class="btn" type="submit">Finalizar</button>
+</form>
+
+<%- include('../partials/footer') %>

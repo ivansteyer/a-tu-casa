@@ -3,6 +3,7 @@
 <form method="post" action="/register" class="form">
 <label>Nombre <input type="text" name="name" required/></label>
 <label>Email <input type="email" name="email" required/></label>
+<label>Teléfono <input name="telefono" value=""></label>
 <label>Contraseña <input type="password" name="password" required/></label>
 <label>Rol <select name="role"><option value="tenant" <%= (role !== 'owner') ? 'selected' : '' %>>Soy Inquilino</option>
 <option value="owner" <%= (role === 'owner') ? 'selected' : '' %>>Soy Propietario</option></select></label>
