@@ -8,19 +8,6 @@ const Property = sequelize.define('Property', {
   ownerId: { type: DataTypes.INTEGER, allowNull: false },
   titulo: { type: DataTypes.STRING, allowNull: false },
 
-<<<<<<< HEAD
-  propertyType: { type: DataTypes.STRING, field: 'tipo' },
-  bedrooms: { type: DataTypes.INTEGER, field: 'habitaciones' },
-  sizeM2: { type: DataTypes.INTEGER, field: 'm2', allowNull: true },
-  stayType: { type: DataTypes.STRING, field: 'modalidad' },
-  neighborhood: { type: DataTypes.STRING, field: 'ubicacion' },
-  terrace: { type: DataTypes.BOOLEAN, field: 'terraza' },
-  availableFrom: { type: DataTypes.DATEONLY, field: 'disponibleDesde' },
-  price: { type: DataTypes.INTEGER, field: 'precio' },
-
-  elevator: { type: DataTypes.BOOLEAN, field: 'ascensor', allowNull: true },
-  floorNumber: { type: DataTypes.INTEGER, field: 'altura', allowNull: true },
-=======
   // ===== Atributos que usan tus controllers (mapeados a columnas en español) =====
   propertyType: { type: DataTypes.STRING,  field: 'tipo' },                // Tipo de propiedad
   bedrooms:     { type: DataTypes.INTEGER, field: 'habitaciones' },       // Número de habitaciones
@@ -33,17 +20,11 @@ const Property = sequelize.define('Property', {
 
   elevator:     { type: DataTypes.BOOLEAN, field: 'ascensor', allowNull: true }, // Ascensor
   floorNumber:  { type: DataTypes.INTEGER, field: 'altura', allowNull: true },   // Altura/piso
->>>>>>> 911f4f7eff05074a4e996336ef41d227871774da
 
   description: { type: DataTypes.TEXT, field: 'descripcion' },
 
-<<<<<<< HEAD
-  published: { type: DataTypes.BOOLEAN, defaultValue: true },
-  photos: { type: DataTypes.TEXT, allowNull: true }, // JSON
-=======
   published:    { type: DataTypes.BOOLEAN, defaultValue: true },          // Publicada
   photos:       { type: DataTypes.TEXT, allowNull: true },                // JSON.stringify([...])
->>>>>>> 911f4f7eff05074a4e996336ef41d227871774da
 }, {
   tableName: 'properties',
 });
