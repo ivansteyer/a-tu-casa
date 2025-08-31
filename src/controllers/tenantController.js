@@ -36,6 +36,8 @@ function mapPropertyForClient(p) {
     bedrooms: p.bedrooms ?? p.rooms ?? 0,
     stayType: p.stayType ?? p.modality ?? "",
     neighborhood: p.neighborhood ?? p.location ?? "",
+    terrace: p.terrace ?? p.hasTerrace ?? null,
+    availableFrom: p.availableFrom ?? p.disponibleDesde ?? null,
     price: p.price ?? p.rent ?? null,
   };
 }
