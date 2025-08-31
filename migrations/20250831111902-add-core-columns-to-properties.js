@@ -1,8 +1,5 @@
-'use strict';
-
 module.exports = {
   async up(queryInterface, Sequelize) {
-    // nuevas columnas
     await queryInterface.addColumn('properties', 'published', {
       type: Sequelize.BOOLEAN,
       allowNull: false,

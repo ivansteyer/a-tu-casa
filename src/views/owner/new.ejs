@@ -1,25 +1,19 @@
 <%- include('../partials/header') %>
 <h2>Nueva propiedad</h2>
-<form
-  class="form grid"
-  method="post"
-  action="/owner/properties/new"
-  enctype="multipart/form-data"
->
+<form class="form grid" method="post" action="/owner/properties/new" enctype="multipart/form-data">
   <label>Título <input name="titulo" required /></label>
   <label>Tipo <input name="tipo" placeholder="piso / casa" /></label>
-  <label
-    >Habitaciones <input name="habitaciones" type="number" min="0"
-  /></label>
+  <label>Habitaciones <input name="habitaciones" type="number" min="0" /></label>
   <label>Ubicación <input name="ubicacion" /></label>
   <label><input type="checkbox" name="terraza" /> ¿Tiene terraza?</label>
-  <label>Precio (€/mes) <input name="precio" type="number" min="0" /></label>
-  <label
-    >Modalidad <input name="modalidad" placeholder="alquiler / venta"
-  /></label>
+  <label>Precio (€/mes) <input name="precio" type="number" min="0" /></label
+  ><label>Modalidad <input name="modalidad" placeholder="alquiler / venta" /></label>
   <label>Disponible desde <input name="disponibleDesde" type="date" /></label>
+  <label>M² <input name="m2" type="number" min="0" /></label>
+  <label><input type="checkbox" name="ascensor" /> ¿Tiene ascensor?</label>
+  <label>Altura <input name="altura" type="number" /></label>
   <label>Descripción <textarea name="descripcion" rows="4"></textarea></label>
-  <label>Fotos <input type="file" name="fotos" multiple /></label>
+  <label>Fotos <input type="file" name="photos" multiple /></label>
   <button class="btn">Publicar</button>
 </form>
 <%- include('../partials/footer') %>

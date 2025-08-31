@@ -18,7 +18,6 @@ function safeParseJson(val) {
 function mapPropertyForClient(p) {
   if (!p) return null;
 
-  // Fotos: intentar en varios campos; si es string lo parseo
   let photos =
     p.photos ??
     p.images ??
@@ -36,6 +35,8 @@ function mapPropertyForClient(p) {
     bedrooms: p.bedrooms ?? p.rooms ?? 0,
     stayType: p.stayType ?? p.modality ?? "",
     neighborhood: p.neighborhood ?? p.location ?? "",
+    terrace: p.terrace ?? p.hasTerrace ?? null,
+    availableFrom: p.availableFrom ?? p.disponibleDesde ?? null,
     price: p.price ?? p.rent ?? null,
   };
 }

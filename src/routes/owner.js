@@ -1,4 +1,5 @@
 // routes/owner.js
+// routes/owner.js
 const express = require('express');
 const router = express.Router();
 const path = require('path');
@@ -28,10 +29,10 @@ router.post('/owner/preferences',        onlyOwner, ownerController.postPreferen
  */
 router.get('/owner/properties',                  onlyOwner, propertyController.ownerList);
 router.get('/owner/properties/new',              onlyOwner, propertyController.getNew);
-router.post('/owner/properties/new',             onlyOwner, uploadProperty.array('fotos'), propertyController.postNew);
+router.post('/owner/properties/new',             onlyOwner, uploadProperty.array('photos'), propertyController.postNew);
 
 router.get('/owner/properties/:id/edit',         onlyOwner, propertyController.getEdit);
-router.put('/owner/properties/:id',              onlyOwner, uploadProperty.array('fotos'), propertyController.update);
+router.put('/owner/properties/:id',              onlyOwner, uploadProperty.array('photos'), propertyController.update);
 router.delete('/owner/properties/:id',           onlyOwner, propertyController.remove);
 
 router.get('/owner/properties/:id/candidates',   onlyOwner, propertyController.candidates);

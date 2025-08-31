@@ -1,58 +1,30 @@
 <%- include('../partials/header') %>
 <h2>Editar propiedad</h2>
-<form
-  class="form grid"
-  method="post"
-  action="/owner/properties/<%= prop.id %>?_method=PUT"
-  enctype="multipart/form-data"
->
-  <label
-    >Título <input name="titulo" required value="<%= prop.titulo %>"
-  /></label>
+<form class="form grid" method="post" action="/owner/properties/<%= prop.id %>?_method=PUT" enctype="multipart/form-data">
+  <label>Título <input name="titulo" required value="<%= prop.titulo %>" /></label>
   <label>Tipo <input name="tipo" value="<%= prop.tipo || '' %>" /></label>
-  <label
-    >Habitaciones
-    <input
-      name="habitaciones"
-      type="number"
-      min="0"
-      value="<%= prop.habitaciones || '' %>"
-  /></label>
-  <label
-    >Ubicación <input name="ubicacion" value="<%= prop.ubicacion || '' %>"
-  /></label>
-  <label
-    ><input type="checkbox" name="terraza" <%= prop.terraza ? 'checked' : '' %>>
-    ¿Tiene terraza?</label
-  >
-  <label
-    >Precio (€/mes)
-    <input name="precio" type="number" min="0" value="<%= prop.precio || '' %>"
-  /></label>
-  <label
-    >Modalidad <input name="modalidad" value="<%= prop.modalidad || '' %>"
-  /></label>
-  <label
-    >Disponible desde
-    <input
-      name="disponibleDesde"
-      type="date"
-      value="<%= prop.disponibleDesde || '' %>"
-  /></label>
-  <label
-    >Descripción
-    <textarea name="descripcion" rows="4">
-<%= prop.descripcion || '' %></textarea
-    >
-  </label>
-  <label>Añadir fotos <input type="file" name="fotos" multiple /></label>
+  <label>Habitaciones <input name="habitaciones" type="number" min="0" value="<%= prop.habitaciones || '' %>" /></label>
+  <label>Ubicación <input name="ubicacion" value="<%= prop.ubicacion || '' %>" /></label>
+  <label><input type="checkbox" name="terraza" <%= prop.terraza ? 'checked' : '' %>> ¿Tiene terraza?</label>
+  <label>Precio (€/mes) <input name="precio" type="number" min="0" value="<%= prop.precio || '' %>" /></label>
+  <label>Modalidad <input name="modalidad" value="<%= prop.modalidad || '' %>" /></label>
+  <label>Disponible desde <input name="disponibleDesde" type="date" value="<%= prop.disponibleDesde || '' %>" /></label>
+  <label>M² <input name="m2" type="number" min="0" value="<%= prop.m2 || '' %>" /></label>
+  <label><input type="checkbox" name="ascensor" <%= prop.ascensor ? 'checked' : '' %>> ¿Tiene ascensor?</label>
+  <label>Altura <input name="altura" type="number" value="<%= prop.altura || '' %>" /></label>
+  <label>Descripción <textarea name="descripcion" rows="4"><%= prop.descripcion || '' %></textarea></label>
+  <label>Añadir fotos <input type="file" name="photos" multiple /></label>
   <button class="btn">Actualizar</button>
 </form>
-<% if (prop.fotos && prop.fotos.length) { %>
+
+<% if (prop.photosArr && prop.photosArr.length) { %>
 <h3>Fotos actuales</h3>
 <div class="cards">
-  <% prop.fotos.forEach(f=>{ %>
-  <img src="/uploads/<%= f.rutaFoto %>" style="max-width: 150px" />
+  <% prop.photosArr.forEach(u => {
+       const src = (u.startsWith('http') || u.startsWith('/')) ? u : '/uploads/' + u;
+  %>
+    <img src="<%= src %>" style="max-width: 150px" />
   <% }) %>
 </div>
-<% } %> <%- include('../partials/footer') %>
+<% } %>
+<%- include('../partials/footer') %>

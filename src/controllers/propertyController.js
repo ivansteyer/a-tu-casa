@@ -1,35 +1,78 @@
 const Property = require('../models/Property');
-// Si todavía no usas la tabla de fotos, puedes comentar esta línea:
-// const PropertyPhoto = require('../models/PropertyPhoto');
 const Match = require('../models/Match');
 const TenantProfile = require('../models/TenantProfile');
 const User = require('../models/User');
 
 /**
- * Parse safe del TEXT photos -> array de strings
+ * Convierte un modelo a objeto plano y agrega photosArr combinando
+ * `properties.photos` (JSON) y, si existe, la relación `fotos`.
  */
 function toPlainWithPhotos(modelOrPlain) {
   const p = modelOrPlain?.get ? modelOrPlain.get({ plain: true }) : modelOrPlain;
   let photosArr = [];
+
+  if (Array.isArray(p?.fotos)) {
+    photosArr = p.fotos.map(f => f.rutaFoto);
+  }
   try {
     if (p && p.photos) {
-      const parsed = JSON.parse(p.photos);
+      const parsed = typeof p.photos === 'string' ? JSON.parse(p.photos) : p.photos;
       if (Array.isArray(parsed)) photosArr = parsed;
     }
   } catch (_) {}
+
   return { ...p, photosArr };
 }
 
+// --- helpers de búsqueda con include opcional ----
+async function findAllSafe(opts = {}) {
+  const order = opts.order || [['createdAt', 'DESC']];
+  try {
+    const PropertyPhoto = require('../models/PropertyPhoto');
+    return await Property.findAll({
+      ...opts,
+      order,
+      include: [{ model: PropertyPhoto, as: 'fotos', order: [['orden', 'ASC']] }],
+    });
+  } catch {
+    return await Property.findAll({ ...opts, order });
+  }
+}
+
+async function findByPkSafe(id, opts = {}) {
+  try {
+    const PropertyPhoto = require('../models/PropertyPhoto');
+    return await Property.findByPk(id, {
+      ...opts,
+      include: [{ model: PropertyPhoto, as: 'fotos', order: [['orden', 'ASC']] }],
+    });
+  } catch {
+    return await Property.findByPk(id, opts);
+  }
+}
+
+async function findOneSafe(opts) {
+  try {
+    const PropertyPhoto = require('../models/PropertyPhoto');
+    return await Property.findOne({
+      ...opts,
+      include: [{ model: PropertyPhoto, as: 'fotos', order: [['orden', 'ASC']] }],
+    });
+  } catch {
+    return await Property.findOne(opts);
+  }
+}
+
+// ------------------- controladores -------------------
+
 const list = async (req, res) => {
-  const rows = await Property.findAll({
-    order: [['createdAt', 'DESC']],
-  });
+  const rows = await findAllSafe();
   const props = rows.map(toPlainWithPhotos);
   res.render('properties/list', { props });
 };
 
 const detail = async (req, res) => {
-  const row = await Property.findByPk(req.params.id);
+  const row = await findByPkSafe(req.params.id);
   if (!row) {
     req.flash('message', 'Propiedad no encontrada');
     return res.redirect('/properties');
@@ -79,10 +122,7 @@ const ownerList = async (req, res) => {
   if (!req.session.userId || req.session.role !== 'owner') {
     return res.redirect('/login');
   }
-  const rows = await Property.findAll({
-    where: { ownerId: req.session.userId },
-    order: [['createdAt', 'DESC']],
-  });
+  const rows = await findAllSafe({ where: { ownerId: req.session.userId } });
   const props = rows.map(toPlainWithPhotos);
   res.render('owner/properties', { props });
 };
@@ -99,7 +139,6 @@ const postNew = async (req, res) => {
     return res.redirect('/login');
   }
 
-  // Construimos URLs de fotos para guardar también en properties.photos (JSON)
   const photoUrls = (req.files || []).map(f => `properties/${f.filename}`);
 
   const d = {
@@ -116,27 +155,20 @@ const postNew = async (req, res) => {
     m2: req.body.m2 ? parseInt(req.body.m2) : null,
     ascensor: !!req.body.ascensor,
     altura: req.body.altura ? parseInt(req.body.altura) : null,
-    // Guardamos también el JSON como fallback para no depender del JOIN
     photos: photoUrls.length ? JSON.stringify(photoUrls) : null,
-    
   };
 
   const prop = await Property.create(d);
 
-  // Si tienes la tabla property_photos, seguimos creando registros. Si no existe, no rompemos.
   try {
     const PropertyPhoto = require('../models/PropertyPhoto');
     if (photoUrls.length && PropertyPhoto?.bulkCreate) {
       await PropertyPhoto.bulkCreate(
-        photoUrls.map((rutaFoto, i) => ({
-          propertyId: prop.id,
-          rutaFoto,
-          orden: i,
-        }))
+        photoUrls.map((rutaFoto, i) => ({ propertyId: prop.id, rutaFoto, orden: i }))
       );
     }
-  } catch (e) {
-    // Silencioso: si no existe el modelo/tabla, seguimos sin fallar.
+  } catch {
+    // ignorar si no existe la tabla
   }
 
   res.redirect('/owner/properties');
@@ -146,9 +178,7 @@ const getEdit = async (req, res) => {
   if (!req.session.userId || req.session.role !== 'owner') {
     return res.redirect('/login');
   }
-  const row = await Property.findOne({
-    where: { id: req.params.id, ownerId: req.session.userId },
-  });
+  const row = await findOneSafe({ where: { id: req.params.id, ownerId: req.session.userId } });
   if (!row) {
     req.flash('message', 'Propiedad no encontrada');
     return res.redirect('/owner/properties');
@@ -161,7 +191,7 @@ const update = async (req, res) => {
   if (!req.session.userId || req.session.role !== 'owner') {
     return res.redirect('/login');
   }
-  const prop = await Property.findOne({ where: { id: req.params.id, ownerId: req.session.userId } });
+  const prop = await findOneSafe({ where: { id: req.params.id, ownerId: req.session.userId } });
   if (!prop) {
     req.flash('message', 'Propiedad no encontrada');
     return res.redirect('/owner/properties');
@@ -182,39 +212,34 @@ const update = async (req, res) => {
     altura: req.body.altura ? parseInt(req.body.altura) : null,
   };
 
-  // Nuevas fotos subidas en esta edición
   const newPhotoUrls = (req.files || []).map(f => `properties/${f.filename}`);
 
-  // Mezclamos con las fotos existentes del JSON
   let currentPhotos = [];
   try {
     if (prop.photos) {
       const parsed = JSON.parse(prop.photos);
       if (Array.isArray(parsed)) currentPhotos = parsed;
     }
-  } catch (_) {}
+  } catch {}
+  if (!currentPhotos.length && Array.isArray(prop.fotos)) {
+    currentPhotos = prop.fotos.map(f => f.rutaFoto);
+  }
 
   const mergedPhotos = [...currentPhotos, ...newPhotoUrls];
   d.photos = mergedPhotos.length ? JSON.stringify(mergedPhotos) : null;
 
   await prop.update(d);
 
-  // Intento opcional de crear también en property_photos (si existe)
   try {
     const PropertyPhoto = require('../models/PropertyPhoto');
     if (newPhotoUrls.length && PropertyPhoto?.bulkCreate) {
-      // calcular índice de orden inicial según cuántas había
       const start = currentPhotos.length;
       await PropertyPhoto.bulkCreate(
-        newPhotoUrls.map((rutaFoto, i) => ({
-          propertyId: prop.id,
-          rutaFoto,
-          orden: start + i,
-        }))
+        newPhotoUrls.map((rutaFoto, i) => ({ propertyId: prop.id, rutaFoto, orden: start + i }))
       );
     }
-  } catch (e) {
-    // Silencioso si la tabla no existe.
+  } catch {
+    // Silencioso si la tabla no existe
   }
 
   res.redirect('/owner/properties');
@@ -225,9 +250,7 @@ const remove = async (req, res) => {
     return res.redirect('/login');
   }
   const prop = await Property.findOne({ where: { id: req.params.id, ownerId: req.session.userId } });
-  if (prop) {
-    await prop.destroy();
-  }
+  if (prop) await prop.destroy();
   res.redirect('/owner/properties');
 };
 
@@ -242,11 +265,9 @@ const candidates = async (req, res) => {
   }
   const matches = await Match.findAll({
     where: { propertyId: prop.id, status: 'liked' },
-    include: [{ model: User, include: [TenantProfile] }]
+    include: [{ model: User, include: [TenantProfile] }],
   });
-  const profiles = matches
-    .map(m => (m.User ? m.User.TenantProfile : null))
-    .filter(Boolean);
+  const profiles = matches.map(m => (m.User ? m.User.TenantProfile : null)).filter(Boolean);
   res.render('owner/candidates', { prop, candidates: profiles });
 };
 

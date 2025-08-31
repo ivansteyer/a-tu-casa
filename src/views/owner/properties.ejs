@@ -5,13 +5,18 @@
 <% props.forEach(p=>{ %>
   <article class="card">
     <h3><%= p.titulo %></h3>
-    <% if (p.fotos && p.fotos.length) { %>
-      <img src="/uploads/<%= p.fotos[0].rutaFoto %>" style="max-width:200px;"/>
+    <% if (p.photosArr && p.photosArr.length) {
+         const u = p.photosArr[0];
+         const src = (u.startsWith('http') || u.startsWith('/')) ? u : '/uploads/' + u;
+    %>
+      <img src="<%= src %>" style="max-width:200px;"/>
     <% } %>
     <p><%= p.ubicacion || '' %> — <%= p.habitaciones || 0 %> hab. — <%= p.precio ? p.precio+'€' : 'Precio a convenir' %></p>
     <a class="btn" href="/owner/properties/<%= p.id %>/candidates">Ver candidatos</a>
     <a class="btn" href="/owner/properties/<%= p.id %>/edit">Editar</a>
-    <form method="post" action="/owner/properties/<%= p.id %>?_method=DELETE" style="display:inline"><button class="btn-outline">Eliminar</button></form>
+    <form method="post" action="/owner/properties/<%= p.id %>?_method=DELETE" style="display:inline">
+      <button class="btn-outline">Eliminar</button>
+    </form>
   </article>
 <% }) %>
 </div>

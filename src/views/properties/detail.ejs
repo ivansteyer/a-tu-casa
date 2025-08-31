@@ -7,8 +7,10 @@
 
 <% if (p.photosArr && p.photosArr.length) { %>
   <div class="cards">
-    <% p.photosArr.forEach(url => { %>
-      <img src="/uploads/<%= url %>" alt="Foto" style="max-width:200px;" />
+    <% p.photosArr.forEach(u => {
+         const src = (u.startsWith('http') || u.startsWith('/')) ? u : '/uploads/' + u;
+    %>
+      <img src="<%= src %>" alt="Foto" style="max-width:200px;" />
     <% }) %>
   </div>
 <% } %>
