@@ -3,34 +3,29 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-lock.yaml
 
-# Env
+# Entornos
 .env
 .env.*
 !.env.example
 
-# Build / coverage
+# Builds / coverage
 dist/
 build/
 coverage/
 
-# OS
+# SO / editor
 .DS_Store
 Thumbs.db
-
-# Editor
 .vscode/
 .idea/
 
-# Next.js
-frontend/.next/
+# Next (dentro de frontend)
 frontend/node_modules/
+frontend/.next/
 frontend/.turbo/
 frontend/out/
 frontend/.vercel/
-
-# Next: env locales
 frontend/.env.local
 frontend/.env.development.local
 frontend/.env.test.local
